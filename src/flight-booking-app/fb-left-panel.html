@@ -1,0 +1,81 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="common-panel.html">
+
+<dom-module id="fb-left-panel">
+  <template>
+    <style>
+      :host {
+        display: block;
+        /* --paper-tabs-selection-bar-color: white; */
+        --paper-tabs-selection-bar:{
+          /* to add style for selected tab bar*/
+          border-bottom: 2px solid var(--paper-pink-400) !important;
+          
+        }
+        --paper-tabs-container:{
+          border: 2px solid var(--paper-pink-400) !important;
+          border-top-right-radius: 16px;
+          border-top-left-radius: 16px;
+        }
+        
+      }
+
+      paper-tabs{
+          padding-top:  10px;
+        }
+
+      iron-pages{
+        padding: 10px 10px;
+        border-right: 2px solid var(--paper-pink-400) !important;
+        border-left: 2px solid var(--paper-pink-400) !important;
+        border-bottom: 2px solid var(--paper-pink-400) !important;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+      }
+      
+    </style>
+        <!-- <iron-ajax url="../../assets/cities.json" last-response="{{cities}}" auto></iron-ajax> -->
+
+      <paper-tabs selected="{{selected}}">
+          <paper-tab name="OneWay" on-tap="_switchTab">One Way</paper-tab>
+          <paper-tab name="Return" on-tap="_switchTab">Return</paper-tab>
+       </paper-tabs>
+       <iron-pages selected="{{selected}}">
+        <div id="oneWay">
+            <common-panel></common-panel>
+        </div>
+          
+        <div id="return">
+          <common-panel return-travel></common-panel>
+        </div>
+       </iron-pages>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class FbLeftPanel extends Polymer.Element {
+      static get is() { return 'fb-left-panel'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'fb-left-panel'
+          },
+          selected: {
+            type: Number,
+            value: 0
+          }
+        };
+      }
+
+    }
+
+    window.customElements.define(FbLeftPanel.is, FbLeftPanel);
+  </script>
+</dom-module>

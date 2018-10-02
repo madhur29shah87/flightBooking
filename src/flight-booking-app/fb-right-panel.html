@@ -1,0 +1,199 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<dom-module id="fb-right-panel">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      * {
+          box-sizing: border-box;
+      }
+
+      .column1 {
+          float: left;
+          width: 70%;
+          padding-left: 20px;
+          padding-top: 10px;
+      }
+      .column2 {
+          float: left;
+          padding: 10px;
+          width: 30%;
+          text-align: center;
+      }
+
+      .row:after {
+        margin-top: 10px;
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      .flightTitle{
+        display: block;
+        border-bottom: 4px solid var(--paper-pink-400);
+        height: 70px;
+        line-height: 22px;
+        padding: 4px 6px;
+        font-size: 14px;
+      }
+
+      .flightTo { float:left }
+      .dates { float:right }
+
+      #flightDetails{
+        margin-top: 10px;
+      }
+
+      #flightDetails:hover{
+        border: 2px solid var(--paper-pink-400);
+        background: var(--paper-grey-100);
+        border-radius: 20px;
+      }
+
+      paper-button.pink {
+        background-color: var(--paper-pink-400);
+        text-transform: capitalize;
+        color: white ;
+        --paper-button-flat-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+      }
+      paper-button.pink:hover {
+        background-color: #DDE1E6;
+      }
+      iron-image{
+        width: 150px;
+        height: 150px;
+      }
+
+
+      .emptySpace{
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%);
+        position: absolute;
+        color: var(--google-grey-700);
+        font-size: 25px;
+      }
+    </style>
+    <iron-ajax url="../../assets/flight-details_template.json" last-response="{{flightDetailsResponse}}" auto></iron-ajax>
+    <dom-if if="{{toFlightsFound}}">
+      <template>
+        <div id="flightsFound">
+          <div class="flightTitle">
+            <h2 class="flightTo"> [[travelDetail.origin]] > [[travelDetail.destination]] <span hidden$="[[!travelDetail.travelReturn]]"> > [[travelDetail.origin]] </span> </h2>
+            <div class="dates">
+              <dom-if if="[[travelDetail.deptDate]]">
+                <template>
+                  <span> Dept: [[travelDetail.deptDate]] </span>
+                </template>
+              </dom-if>
+              <br>
+              <dom-if if="[[travelDetail.returnDate]]">
+                  <template>
+                    <span> Return: [[travelDetail.returnDate]]</span>
+                  </template>
+              </dom-if>
+            </div>
+          </div>
+          <dom-repeat items="{{toFlights}}">
+            <template>
+                <div id="flightDetails" class="row">
+                    <div class="column1" >
+                      <div id="toFlights">
+                        <h2>Rs. {{item.price}}</h2>
+                        <p>{{item.flightNumber}}</p>
+                        <p>{{item.origin}} > {{item.destination}} </p>
+                        <p>Depart - {{item.depart}}</p>
+                        <p>Arrive - {{item.arrive}}</p>
+                      </div>
+                    </div>
+                    <div class="column2" >
+                      <iron-image sizing="cover" alt="{{item.ariline}}" src="{{item.airlineUrl}}"></iron-image>
+                      <br>
+                      <paper-button raised class="pink" on-tap="_submitSEarch">Book this flight</paper-button>
+                    </div>
+                </div>
+            </template>
+          </dom-repeat>
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="{{!toFlightsFound}}">
+      <template>
+        <div class="emptySpace">
+          Select Search Criteria For Your Flights! 
+        </div>
+      </template>
+    </dom-if>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class FbRightPanel extends Polymer.Element {
+      static get is() { return 'fb-right-panel'; }
+      static get properties() {
+        return {
+          travelDetail: {
+            type: Object,
+            value: null,
+            notify: true,
+            observer: '_populateFlightDetails'
+          },
+          flightDetailsResponse: {
+            type: Array,
+            value: null
+          },
+          toFlights: {
+            type: Array,
+            value: null,
+            notify: true
+          },
+          toFlightsFound: {
+            type: Boolean,
+            value: false
+          },
+          returnFlights: {
+            type: Array,
+            value: null,
+            notify: true
+          }
+        };
+      }
+      _populateFlightDetails(){
+        this.toFlights = new Array();
+        this.returnFlights = new Array();
+        if(this.flightDetailsResponse){
+          var length = this.flightDetailsResponse.length;
+          for(var i=0; i< length; i++){
+            var flightDetail = this.flightDetailsResponse[i];
+            if(this.travelDetail.origin == flightDetail.origin && this.travelDetail.destination == flightDetail.destination){
+              this.toFlights.push(flightDetail);
+            }
+            if(this.travelDetail.travelReturn && this.travelDetail.destination == flightDetail.origin && this.travelDetail.origin == flightDetail.destination){
+              this.returnFlights.push(flightDetail);
+            }
+          }
+        }
+        this.toFlightsFound = this.toFlights.length > 0 ? true : false;
+      }
+      
+    }
+
+    window.customElements.define(FbRightPanel.is, FbRightPanel);
+  </script>
+</dom-module>

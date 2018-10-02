@@ -1,0 +1,171 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower_components/vaadin-dropdown-menu/vaadin-dropdown-menu.html">
+<link rel="import" href="../../bower_components/vaadin-item/vaadin-item.html">
+<link rel="import" href="../../bower_components/vaadin-list-box/vaadin-list-box.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<dom-module id="common-panel">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      vaadin-combo-box,vaadin-date-picker,vaadin-dropdown-menu{
+          width: 100%;
+        }
+
+
+      paper-button.pink {
+        /* These could also be individually defined for each of the
+          specific css classes, but we'll just do it once as an example */
+        background-color: var(--paper-pink-400);
+        text-transform: capitalize;
+        color: white ;
+        --paper-button-flat-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+      }
+        paper-button.pink:hover {
+          background-color: var(--paper-indigo-100);
+        }
+      #buttonDiv{
+        margin: 20px auto;
+        text-align: center;
+      }
+      centerToast{
+        left: 50%;
+        top: 20%;
+      }
+      #errorToast{
+        left: 40% !important;
+        top: 20% !important;
+        text-align: center;
+        --paper-toast-background-color: var(--paper-red-50);
+        --paper-toast-color: var(--paper-red-a700);
+        font-weight: 600;	
+      }
+    </style>
+    <iron-ajax url="../../assets/cities.json" last-response="{{cities}}" auto></iron-ajax>
+        <vaadin-combo-box id="origin" label="Origin" placeholder="Enter Origin City" items="[[cities]]" 
+        item-value-path="name" item-label-path="name" required error-message="Origin is mandatory"></vaadin-combo-box>
+
+        <vaadin-combo-box id="destination" label="Destination" placeholder="Enter Destination City" items="[[cities]]" 
+        item-value-path="name" item-label-path="name" required error-message="Destination is mandatory"></vaadin-combo-box>
+
+        <vaadin-date-picker id="deptDate" label="Departure Date" placeholder="Select Departure Date" >
+        </vaadin-date-picker>
+
+        <dom-if if="[[returnTravel]]">
+          <template>
+            <vaadin-date-picker id="returnDate" label="Return Date" placeholder="Select Return Date" >
+            </vaadin-date-picker>
+          </template>
+        </dom-if>
+
+        <vaadin-dropdown-menu id="passangers" label="Passangers" placeholder="Select number of passangers" error-message="Please select number of passangers" required>
+            <template>
+              <vaadin-list-box>
+                <vaadin-item value="1">1</vaadin-item>
+                <vaadin-item value="2">2</vaadin-item>
+                <vaadin-item value="3">3</vaadin-item>
+                <vaadin-item value="4">4</vaadin-item>
+              </vaadin-list-box>
+            </template>
+          </vaadin-dropdown-menu>
+      
+      <div id="buttonDiv">
+        <paper-button raised class="pink" on-tap="_submitSEarch">Search</paper-button>
+        <!-- <paper-button raised class="pink">Cancel</paper-button> -->
+      </div>
+          
+      <paper-toast class="fit-top" text="Please fill complete details." id="errorToast" ></paper-toast>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class CommonPanel extends Polymer.Element {
+      static get is() { return 'common-panel'; }
+      static get properties() {
+        return {
+          returnTravel: {
+            type: Boolean,
+            value: false
+          },
+          travelDetail:{
+            type: Object,
+            value: null,
+            notify: true
+          },
+          cities: {
+            type: Array
+          }
+        };
+      }
+
+      _submitSEarch(){
+        var origin = this.$.origin.value;
+        var destination = this.$.destination.value;
+        var deptDate = this.$.deptDate.value;
+        var returnDate;
+        var noOfPassangers = this.$.passangers;
+        var toast =  this.$.errorToast;
+        this.travelDetail = new Object();
+
+        if(!origin || !destination || !deptDate || !noOfPassangers){
+          toast.open();
+          return;
+        } else {
+          if(origin == destination){
+            toast.text = "Origin and destination cannot be same! ";
+            toast.open();
+            return;
+          }
+          var formatedDeptDate = new Date(deptDate);
+          var currentDate = new Date();
+          if(formatedDeptDate <= currentDate){
+            toast.text = 'Departure Date must not be older date!';
+            toast.open();
+          }
+          // check dept date must be after current time 
+          this.travelDetail['origin'] = origin;
+          this.travelDetail['destination'] = destination;
+          this.travelDetail['deptDate'] = deptDate;
+          this.travelDetail['passangers'] = noOfPassangers;
+          
+        }
+
+        returnDate = this.shadowRoot.querySelector('#returnDate') ? this.shadowRoot.querySelector('#returnDate').value : "";
+
+        if(this.returnTravel && !returnDate){
+          toast.open();
+          return;
+        } else if(this.returnTravel && returnDate){
+          var formatedReturnDate = new Date(returnDate);
+          if(formatedReturnDate <= formatedDeptDate){
+            toast.text = 'Return date must be after departure date!';
+            toast.open();
+          } else {
+            this.travelDetail['returnDate'] = returnDate;
+            this.travelDetail['travelReturn'] = true;
+          }
+        }
+        var rightPanel = document.querySelector('body flight-booking-app').shadowRoot.querySelector('section article fb-right-panel');
+        rightPanel.travelDetail = this.travelDetail;
+      }
+    }
+
+    window.customElements.define(CommonPanel.is, CommonPanel);
+  </script>
+</dom-module>

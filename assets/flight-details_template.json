@@ -1,0 +1,63 @@
+[
+    {
+        "origin": "Delhi",
+        "destination": "Mumbai",
+        "price": 2500,
+        "flightNumber": "AI-202",
+        "airline": "go-air",
+        "airlineUrl": "../../assets/goair.png",
+        "depart": "08:00 AM",
+        "arrive": "10:00 AM"
+    },
+    {
+        "origin": "Mumbai",
+        "destination": "Delhi",
+        "price": 2200,
+        "flightNumber": "AI-202",
+        "airline": "go-air",
+        "airlineUrl": "../../assets/goair.png",
+        "depart": "04:00 PM",
+        "arrive": "06:05 PM"
+    },
+    {
+        "origin": "Delhi",
+        "destination": "Mumbai",
+        "price": 2100,
+        "flightNumber": "AK-420",
+        "airline": "Airasia",
+        "airlineUrl": "../../assets/airasia.png",
+        "depart": "12:00 PM",
+        "arrive": "01:45 PM"
+    },
+    {
+        "origin": "Mumbai",
+        "destination": "Delhi",
+        "price": 2200,
+        "flightNumber": "AK-100",
+        "airlineUrl": "../../assets/airasia.png",
+        "airline": "Airasia",
+        "depart": "07:00 PM",
+        "arrive": "09:30 PM"
+    },
+    {
+        "origin": "Delhi",
+        "destination": "Pune",
+        "price": 3500,
+        "flightNumber": "K-201",
+        "airlineUrl": "../../assets/indigo.png",
+        "airline": "Indigo",
+        "depart": "08:00 AM",
+        "arrive": "10:00 AM"
+    },
+    {
+        "origin": "Mumbai",
+        "destination": "Pune",
+        "price": 1200,
+        "flightNumber": "J-201",
+        "airlineUrl": "../../assets/jetAirways.jpg",
+        "airline": "Jet Air",
+        "depart": "07:00 AM",
+        "arrive": "07:45 AM"
+    }
+
+]

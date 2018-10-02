@@ -1,0 +1,95 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="fb-left-panel.html">
+<link rel="import" href="fb-right-panel.html">
+
+<dom-module id="flight-booking-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      header{
+        height: 10vh;
+        position: relative;
+        background: var(--paper-pink-400);
+      }
+      * {
+          box-sizing: border-box;
+      }
+      #header{
+        top: 50%;
+        left: 35px;
+        color: white;
+        transform: translateY(-50%);
+        overflow: auto;
+        position: absolute;
+
+      }
+
+      nav {
+          float: left;
+          width: 30%;
+          padding: 20px;
+          
+          height: 90vh;
+      }
+
+      article {
+          float: left;
+          padding: 20px;
+          width: 70%;
+          height: 90vh;
+      }
+
+      /* Clear floats after the columns */
+      section:after {
+          content: "";
+          display: table;
+          clear: both;
+      }
+
+      @media (max-width: 600px) {
+        nav, article {
+            width: 100%;
+            height: auto;
+        }
+      }
+</style>  
+    <header>
+      <div id="header">
+        Flight Search Engine 
+      </div>
+    </header>
+    <section>
+      <nav>
+          <fb-left-panel></fb-left-panel>
+      </nav>
+        
+      <article>
+        <fb-right-panel></fb-right-panel>
+      </article>
+      </section>
+    
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class FlightBookingApp extends Polymer.Element {
+      static get is() { return 'flight-booking-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'flight-booking-app'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(FlightBookingApp.is, FlightBookingApp);
+  </script>
+</dom-module>
