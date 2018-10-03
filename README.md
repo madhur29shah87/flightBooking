@@ -1,11 +1,15 @@
 # \<flight-booking\>
 
-
+## Required - Node, npm, and bower 
 
 ## Install the Polymer-CLI
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
 
+## Bower install - all dependencies required for the project
+```
+$ bower install
+```
 ## Viewing Your Application
 
 ```
