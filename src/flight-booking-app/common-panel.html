@@ -16,8 +16,7 @@
       }
       vaadin-combo-box,vaadin-date-picker,vaadin-dropdown-menu{
           width: 100%;
-        }
-
+      }
 
       paper-button.pink {
         /* These could also be individually defined for each of the
@@ -84,7 +83,6 @@
       
       <div id="buttonDiv">
         <paper-button raised class="pink" on-tap="_submitSEarch">Search</paper-button>
-        <!-- <paper-button raised class="pink">Cancel</paper-button> -->
       </div>
           
       <paper-toast class="fit-top" text="Please fill complete details." id="errorToast" ></paper-toast>
@@ -114,6 +112,7 @@
         };
       }
 
+      // basic validation is performed and if it is not satisfied error toast is displayed
       _submitSEarch(){
         var origin = this.$.origin.value;
         var destination = this.$.destination.value;
@@ -161,6 +160,8 @@
             this.travelDetail['travelReturn'] = true;
           }
         }
+        // once all validations are passed 
+        // travel detail array is passed to right panel using below queryselector
         var rightPanel = document.querySelector('body flight-booking-app').shadowRoot.querySelector('section article fb-right-panel');
         rightPanel.travelDetail = this.travelDetail;
       }

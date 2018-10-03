@@ -76,6 +76,13 @@
         height: 150px;
       }
 
+      hr{
+        margin-top: 13px;
+        height: 4px;
+        color: var(--paper-pink-a200);
+        background-color: var(--paper-pink-a200);
+        border: none;
+      }
 
       .emptySpace{
         top: 50%;
@@ -85,13 +92,18 @@
         color: var(--google-grey-700);
         font-size: 25px;
       }
+
+      .buttonDiv{
+        margin: 20px auto;
+        text-align: center;
+      }
     </style>
-    <iron-ajax url="../../assets/flight-details_template.json" last-response="{{flightDetailsResponse}}" auto></iron-ajax>
+    <iron-ajax url="../../assets/flight-details.json" last-response="{{flightDetailsResponse}}" auto></iron-ajax>
     <dom-if if="{{toFlightsFound}}">
       <template>
         <div id="flightsFound">
           <div class="flightTitle">
-            <h2 class="flightTo"> [[travelDetail.origin]] > [[travelDetail.destination]] <span hidden$="[[!travelDetail.travelReturn]]"> > [[travelDetail.origin]] </span> </h2>
+            <h2 class="flightTo"> [[travelDetail.origin]] > [[travelDetail.destination]] <span hidden$="[[!returnTitle]]"> > [[travelDetail.origin]] </span> </h2>
             <div class="dates">
               <dom-if if="[[travelDetail.deptDate]]">
                 <template>
@@ -106,6 +118,7 @@
               </dom-if>
             </div>
           </div>
+          <!--Using dom-repeat to travel through flight object array   -->
           <dom-repeat items="{{toFlights}}">
             <template>
                 <div id="flightDetails" class="row">
@@ -126,10 +139,22 @@
                 </div>
             </template>
           </dom-repeat>
+        
+        <hr>
+        <!--Conditionally enabling return and back button  -->
+        <div class="buttonDiv" hidden$="{{!travelDetail.travelReturn}}">
+          <paper-button raised class="pink" on-tap="_returnFlights"> Return Filghts &gt; </paper-button>
+        </div>
+          
+        <div class="buttonDiv" hidden$="{{back}}">
+          <paper-button raised class="pink" on-tap="_backToFlights"> &lt; Back</paper-button>
+        </div>
+
         </div>
       </template>
     </dom-if>
 
+    <!-- Empty page content - conditionally displayed -->
     <dom-if if="{{!toFlightsFound}}">
       <template>
         <div class="emptySpace">
@@ -137,8 +162,8 @@
         </div>
       </template>
     </dom-if>
+  <!-- more features can be added like a spinner till we receive the response -->
   </template>
-
   <script>
     /**
      * @customElement
@@ -151,7 +176,10 @@
           travelDetail: {
             type: Object,
             value: null,
+            // reflects changes back to DOM whenever updated
             notify: true,
+            reflectToAttribute: true,
+            // whever travelDetail object is _populateFlightDetails will be called
             observer: '_populateFlightDetails'
           },
           flightDetailsResponse: {
@@ -161,7 +189,9 @@
           toFlights: {
             type: Array,
             value: null,
-            notify: true
+            notify: true,
+            notifyPath: true,
+            reflectToAttribute: true,
           },
           toFlightsFound: {
             type: Boolean,
@@ -171,9 +201,23 @@
             type: Array,
             value: null,
             notify: true
+          },
+          tempToFlights: {
+            type: Array,
+            value: null
+          },
+          back: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true,
+          },
+          returnTitle: {
+            type: Boolean,
+            value: false
           }
         };
       }
+      // populating flights object Array
       _populateFlightDetails(){
         this.toFlights = new Array();
         this.returnFlights = new Array();
@@ -186,10 +230,39 @@
             }
             if(this.travelDetail.travelReturn && this.travelDetail.destination == flightDetail.origin && this.travelDetail.origin == flightDetail.destination){
               this.returnFlights.push(flightDetail);
+              this.returnTitle = this.travelDetail.travelReturn;
             }
           }
         }
         this.toFlightsFound = this.toFlights.length > 0 ? true : false;
+      }
+
+      // function called to populate return flights. same DOM structure and same toFlights object array is populated
+      // code reusability 
+      _returnFlights(){
+        this.tempToFlights = this.toFlights;
+        this.toFlights = null;
+        // below statement doesn't mutate/notify the binded array objects in DOM notify only works for direct variable changes
+        // this.toFlights = Object.assign({}, this.returnFlights);
+        // Hence using MutableData mixin this.set() to reflect it back in dom for arrays
+        this.set('toFlights' ,  this.returnFlights);
+        // Also notifyPath is mandatory to reflect the changes
+        this.notifyPath('toFlights');
+        this.travelDetail.travelReturn = false;
+        // same is for object mutated value is not refelected in DOM ...
+        // hence notifyPath is used so that path which is changed within object is notified
+        this.notifyPath('travelDetail.travelReturn');
+        this.back = false;
+      }
+
+      // function called on back to to flights - again same DOM structure and same toFlights object array is repopulated
+      _backToFlights(){
+        this.back = true;
+        this.travelDetail.travelReturn = true;
+        this.notifyPath('travelDetail.travelReturn');
+        this.set('toFlights' ,  this.tempToFlights);
+        this.notifyPath('toFlights');
+
       }
       
     }

@@ -15,7 +15,7 @@
         "price": 2200,
         "flightNumber": "AI-202",
         "airline": "go-air",
-        "airlineUrl": "../../assets/goair.png",
+        "airlineUrl": "../../assets/jetAirways.jpg",
         "depart": "04:00 PM",
         "arrive": "06:05 PM"
     },
